@@ -10,7 +10,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// Add your HTML and API routes here
 app.get('/notes', (req, res) => {
   res.sendFile(path.join(__dirname, '/public/notes.html'));
 });
@@ -35,7 +34,7 @@ app.post('/api/notes', (req, res) => {
     const notes = JSON.parse(data);
     notes.push(newNote);
 
-    fs.writeFile(path.join(__dirname, '/db/db.json'), JSON.stringify(notes), (err) => {
+    fs.writeFile(path.join(__dirname, '/db/db.json'), JSON.stringify(notes, null, 2), (err) => {
       if (err) throw err;
       res.json(newNote);
     });
@@ -49,18 +48,15 @@ app.delete('/api/notes/:id', (req, res) => {
     if (err) throw err;
     let notes = JSON.parse(data);
     notes = notes.filter((note) => note.id !== noteId);
-    fs.writeFile(path.join(__dirname, '/db/db.json'), JSON.stringify(notes), (err) => {
+
+    fs.writeFile(path.join(__dirname, '/db/db.json'), JSON.stringify(notes, null, 2), (err) => {
       if (err) throw err;
       res.json({ message: 'Note deleted successfully!' });
     });
-  });
-  fs.writeFile(path.join(__dirname, '/db/db.json'), JSON.stringify(notes), (err) => {
-    if (err) throw err;
-    res.json({ message: 'Note deleted successfully!' });
   });
 });
 
 
 app.listen(PORT, () => {
-  console.log(`http://localhost:${PORT}`);
+  console.log(`This app is listening at http://localhost:${PORT}`);
 });
